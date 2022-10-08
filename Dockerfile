@@ -26,8 +26,7 @@ RUN apt-get update ; \
 
 RUN apt update -y && \
   apt install -y git && \
-  git clone https://github.com/casjay-dotfiles/scripts "/usr/local/share/CasjaysDev/scripts" && \
-  /usr/local/share/CasjaysDev/scripts/install.sh && \
+  #git clone https://github.com/casjay-dotfiles/scripts "/usr/local/share/CasjaysDev/scripts" && /usr/local/share/CasjaysDev/scripts/install.sh && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -68,7 +67,7 @@ EXPOSE $PORT
 
 COPY --from=build /. /
 
-ENTRYPOINT ["/sbin/init"]
+ENTRYPOINT ["/lib/systemd/systemd", "log-level=info", "unit=sysinit.target"]
 CMD [ "/usr/local/bin/entrypoint-system-scripts.sh" ]
 HEALTHCHECK --start-period=1m --interval=2m --timeout=3s CMD [ "/usr/local/bin/entrypoint-system-scripts.sh", "healthcheck" ]
 

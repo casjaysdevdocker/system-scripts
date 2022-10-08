@@ -26,7 +26,9 @@ RUN apt-get update ; \
 
 RUN apt update -y && \
   apt install -y git && \
-  #git clone https://github.com/casjay-dotfiles/scripts "/usr/local/share/CasjaysDev/scripts" && /usr/local/share/CasjaysDev/scripts/install.sh && \
+  git clone https://github.com/casjay-dotfiles/scripts "/usr/local/share/CasjaysDev/scripts" && /usr/local/share/CasjaysDev/scripts/install.sh && \
+  dfmgr install bash misc git && \
+  fontmgr install --all && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 

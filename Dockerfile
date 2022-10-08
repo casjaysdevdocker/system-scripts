@@ -12,10 +12,24 @@ ENV SHELL="/bin/bash" \
   TZ="$TIMEZONE" \
   DEBIAN_FRONTEND=noninteractive
 
+RUN apt-get update ; \
+  apt-get install -y systemd systemd-sysv; \
+  rm -rf /lib/systemd/system/multi-user.target.wants/* ; \
+  rm -rf /etc/systemd/system/*.wants/* ; \
+  rm -rf /lib/systemd/system/local-fs.target.wants/* ; \
+  rm -rf /lib/systemd/system/sockets.target.wants/*udev* ; \
+  rm -rf /lib/systemd/system/sockets.target.wants/*initctl* ; \
+  rm -rf /lib/systemd/system/sysinit.target.wants/systemd-tmpfiles-setup* ; \
+  rm -rf /lib/systemd/system/systemd-update-utmp* && \
+  cd /lib/systemd/system/sysinit.target.wants/ && \
+  rm $(ls | grep -v systemd-tmpfiles-setup)
+
 RUN apt update -y && \
   apt install -y git && \
   git clone https://github.com/casjay-dotfiles/scripts "/usr/local/share/CasjaysDev/scripts" && \
-  /usr/local/share/CasjaysDev/scripts/install.sh
+  /usr/local/share/CasjaysDev/scripts/install.sh && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY ./bin/. /usr/local/bin/
 COPY ./config/. /config/
@@ -48,13 +62,13 @@ ENV SHELL="/bin/bash" \
 
 WORKDIR /root
 
-VOLUME ["/root","/config","/data"]
+VOLUME ["/sys/fs/cgroup","/root","/config","/data"]
 
 EXPOSE $PORT
 
 COPY --from=build /. /
 
-ENTRYPOINT [ "tini", "--" ]
+ENTRYPOINT ["/sbin/init"]
 CMD [ "/usr/local/bin/entrypoint-system-scripts.sh" ]
 HEALTHCHECK --start-period=1m --interval=2m --timeout=3s CMD [ "/usr/local/bin/entrypoint-system-scripts.sh", "healthcheck" ]
 

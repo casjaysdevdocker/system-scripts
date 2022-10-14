@@ -88,7 +88,7 @@ VOLUME [ "/config","/data" ]
 
 EXPOSE $PORTS
 
-ENTRYPOINT [ "tini", "-p", "SIGTERM", "--" ]
+ENTRYPOINT ["/lib/systemd/systemd", "log-level=info", "unit=sysinit.target"]
 CMD [ "/usr/local/bin/entrypoint-system-scripts.sh" ]
 HEALTHCHECK --start-period=1m --interval=2m --timeout=3s CMD [ "/usr/local/bin/entrypoint-system-scripts.sh", "healthcheck" ]
 

@@ -23,6 +23,7 @@ RUN set -ex; \
   chmod 755 /etc/profile.d/apt.sh && \
   apt update -yy && apt upgrade -yy && apt install -yy \
   git \
+  tini \
   systemd \
   systemd-sysv && \
   git clone https://github.com/casjay-dotfiles/scripts "/usr/local/share/CasjaysDev/scripts" && \
